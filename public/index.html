@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Assessment</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            /* Indigo 500 */
+            --primary-dark: #4f46e5;
+            --accent: #06b6d4;
+            /* Cyan 500 */
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background shapes */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        body::before {
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            background: var(--accent);
+            bottom: -100px;
+            right: -100px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #818cf8, #22d3ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism Card Style - Reused for Container, Login, Results */
+        .container,
+        .login-card,
+        .results-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px;
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+        }
+
+        .login-card {
+            max-width: 450px;
+        }
+
+        .results-card {
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* --- Input Fields --- */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .role-options label {
+            margin-bottom: 0;
+            flex: 1;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* --- Buttons --- */
+        button,
+        .login-btn,
+        .home-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.6);
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover,
+        .login-btn:hover,
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.7);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* --- Timer --- */
+        .timer {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* --- Questions --- */
+        .question {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Custom Radio Buttons */
+        label {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+        }
+
+        label:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-gray);
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        input[type="radio"]:checked {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        label:has(input:checked) {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+
+        /* --- Results Page --- */
+        .thank-you-msg {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .candidate-info {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid var(--glass-border);
+        }
+
+        .candidate-info p {
+            margin: 8px 0;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .candidate-info strong {
+            color: var(--accent);
+        }
+
+        .score-display {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .total-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .section-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .section-scores p {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .section-scores strong {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        /* --- Utility --- */
+        .hidden {
+            display: none !important;
+        }
+
+        #loginSection,
+        #resultsPage {
+            background: transparent;
+            /* Override previous container bg */
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+
+            .container,
+            .login-card,
+            .results-card {
+                padding: 25px;
+                margin: 15px;
+                width: auto;
+            }
+
+            h1 {
+                font-size: 2rem;
+                background-clip: text;
+            }
+
+            .total-score {
+                font-size: 2.5rem;
+            }
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #bef264;
+            margin-top: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Admin Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .admin-table th {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loginSection">
+        <div class="login-card">
+            <h1>Interview Assessment</h1>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Role</label>
+                    <div class="role-options">
+                        <label>
+                            <input type="radio" name="role" value="student" checked> Student
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="teacher"> Teacher
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container hidden" id="quizSection">
+
+        <h1>Interview Assessment</h1>
+        <div class="timer" id="timer"></div>
+
+        <form id="quiz"></form>
+
+        <button id="submitBtn" onclick="handleNextQuestion()">Next</button>
+
+        <div id="result" class="hidden"></div>
+        <div id="admin" class="hidden"></div>
+
+    </div>
+
+    <div id="resultsPage" class="hidden">
+        <div class="results-card">
+            <h1>🎉 Thank You!</h1>
+            <p class="thank-you-msg">Thank you for taking the Interview Assessment. We appreciate your time and effort.
+            </p>
+
+            <div class="candidate-info">
+                <p><strong>Name:</strong> <span id="resultName"></span></p>
+                <p><strong>Email:</strong> <span id="resultEmail"></span></p>
+                <p><strong>Assessment Time:</strong> <span id="resultTime"></span></p>
+            </div>
+
+            <div class="score-display">
+                <div class="total-score" id="totalScore">0/40</div>
+                <p style="color: #059669; font-weight: 600;">Total Score</p>
+
+                <div class="section-scores" id="sectionScores"></div>
+            </div>
+
+            <p style="color: #1f2937; margin-bottom: 25px;">Your results have been recorded successfully. Best of luck!
+            </p>
+            <button class="home-btn" onclick="backToLogin()">Go Back to Login</button>
+        </div>
+    </div>
+
+
+    <script>
+        // ================= CONFIG =================
+        const TEST_DURATION = 30 * 60; // 30 minutes in seconds
+        const ADMIN_PASSWORD = "admin123";
+        const BACKEND_URL = window.location.origin;
+
+        // ================= LOGIN =================
+        // ================= LOGIN =================
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+
+            // Basic validation
+            if (name.length < 2) {
+                document.getElementById("loginError").innerText = "Name must be at least 2 characters";
+                return;
+            }
+
+            if (password.length < 4) {
+                document.getElementById("loginError").innerText = "Password must be at least 4 characters";
+                return;
+            }
+
+            if (role === "teacher") {
+                if (password === ADMIN_PASSWORD) {
+                    // Show Admin Dashboard
+                    // Show Admin Dashboard
+                    document.getElementById("loginSection").classList.add("hidden");
+                    document.getElementById("quizSection").classList.remove("hidden");
+
+                    // Hide quiz elements and show admin only
+                    document.getElementById("timer").classList.add("hidden");
+                    document.getElementById("quiz").classList.add("hidden");
+                    document.getElementById("submitBtn").classList.add("hidden");
+                    document.querySelector("#quizSection h1").innerText = "Teacher Dashboard";
+
+                    document.getElementById("admin").classList.remove("hidden");
+                    document.getElementById("admin").innerHTML = "<p>Loading results...</p>";
+
+                    fetch(`${BACKEND_URL}/api/results`)
+                        .then(res => res.json())
+                        .then(allResults => {
+                            let tableHTML = `
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Score</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+
+                            if (allResults.length === 0) {
+                                tableHTML += `<tr><td colspan="4" style="text-align:center; padding: 20px;">No results found yet.</td></tr>`;
+                            } else {
+                                allResults.forEach(res => {
+                                    const dateStr = new Date(res.submittedAt).toLocaleString();
+                                    tableHTML += `
+                                        <tr>
+                                            <td>${res.name}</td>
+                                            <td>${res.email}</td>
+                                            <td><strong>${res.totalScore}</strong>/40</td>
+                                            <td>${dateStr}</td>
+                                        </tr>
+                                    `;
+                                });
+                            }
+
+                            tableHTML += `</tbody></table>`;
+                            tableHTML += `<button onclick="location.reload()" style="margin-top:20px; width:auto;">Logout</button>`;
+                            document.getElementById("admin").innerHTML = tableHTML;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            document.getElementById("admin").innerHTML = "<p>Error loading results. Ensure backend is running.</p><button onclick='location.reload()'>Back</button>";
+                        });
+                } else {
+                    document.getElementById("loginError").innerText = "Invalid Teacher Password";
+                }
+                return;
+            }
+
+            // Student Login Flow
+            // Store user info
+            const userData = { name, email, loginTime: new Date().toLocaleString() };
+            localStorage.setItem("currentUser", JSON.stringify(userData));
+
+            // Hide login, show quiz
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("quizSection").classList.remove("hidden");
+
+            // Initialize quiz
+            initializeQuiz();
+        }
+
+        function initializeQuiz() {
+            // Start timer and render questions
+            startTimer();
+            renderQuestions();
+        }
+
+        function startTimer() {
+            let timeLeft = TEST_DURATION;
+            const timerEl = document.getElementById("timer");
+
+            const updateTimer = () => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = String(timeLeft % 60).padStart(2, '0');
+                timerEl.innerText = `Time Left: ${mins}:${secs}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    submitQuiz(true);
+                }
+            };
+
+            updateTimer();
+            const interval = setInterval(updateTimer, 1000);
+            window.timerInterval = interval;
+        }
+
+
+
+        // ================= QUESTIONS =================
+        const sections = {
+            Aptitude: [
+                { q: "25% of 200?", o: ["25", "40", "50", "75"], a: 2 },
+                { q: "15²?", o: ["225", "200", "250", "275"], a: 0 },
+                { q: "Avg of 2,4,6,8?", o: ["4", "5", "6", "7"], a: 1 },
+                { q: "2x+3 if x=5?", o: ["10", "11", "13", "15"], a: 2 },
+                { q: "SI on 1000 at 10% for 2 yrs?", o: ["100", "150", "200", "250"], a: 2 },
+                { q: "Speed 60km/h for 120km?", o: ["1", "2", "3", "4"], a: 1 },
+                { q: "SP=CP means?", o: ["Profit", "Loss", "Neutral", "None"], a: 2 },
+                { q: "Ratio 2:3 = ?", o: ["0.66", "1.5", "2", "3"], a: 0 },
+                { q: "10 workers 5 days, 5 workers?", o: ["5", "10", "15", "20"], a: 1 },
+                { q: "20% gain on 100?", o: ["110", "115", "120", "125"], a: 2 }
+            ],
+
+            Programming: [
+                { q: "Which is interpreted?", o: ["C", "Java", "Python", "C++"], a: 2 },
+                { q: "FIFO structure?", o: ["Stack", "Queue", "Tree", "Graph"], a: 1 },
+                { q: "JS strict comparison?", o: ["==", "===", "=", "!="], a: 1 },
+                { q: "Binary search complexity?", o: ["O(n)", "O(log n)", "O(n²)", "O(1)"], a: 1 },
+                { q: "Backend language?", o: ["HTML", "CSS", "Python", "Bootstrap"], a: 2 },
+                { q: "NoSQL DB?", o: ["MySQL", "Oracle", "MongoDB", "Postgres"], a: 2 },
+                { q: "HTML stands for?", o: ["Hyper Text Markup Language", "High ML", "None", "HT Tool"], a: 0 },
+                { q: "Loop runs once minimum?", o: ["for", "while", "do-while", "foreach"], a: 2 },
+                { q: "OOP concept?", o: ["Encapsulation", "Compilation", "Execution", "Linking"], a: 0 },
+                { q: "JS variable keyword?", o: ["int", "let", "define", "varies"], a: 1 }
+            ],
+
+            Reasoning: [
+                { q: "2,4,8,16,?", o: ["18", "24", "32", "64"], a: 2 },
+                { q: "Odd one: Dog, Cat, Cow, Car", o: ["Dog", "Cat", "Cow", "Car"], a: 3 },
+                { q: "A=1, Z=?", o: ["24", "25", "26", "27"], a: 2 },
+                { q: "Circle, Square, Triangle, Cube", o: ["Circle", "Square", "Triangle", "Cube"], a: 3 },
+                { q: "3,6,11,18,?", o: ["25", "26", "27", "28"], a: 1 },
+                { q: "Pen, Pencil, Eraser, Book", o: ["Pen", "Pencil", "Eraser", "Book"], a: 3 },
+                { q: "All cats animals. Tom cat. Tom?", o: ["Human", "Bird", "Animal", "Fish"], a: 2 },
+                { q: "Mon, Wed, Fri, ?", o: ["Sat", "Sun", "Mon", "Tue"], a: 1 },
+                { q: "5+3=28, 9+1=?", o: ["20", "30", "10", "18"], a: 1 },
+                { q: "Mirror of 12:30?", o: ["6:30", "9:30", "11:30", "12:30"], a: 0 }
+            ],
+
+            Interview: [
+                { q: "What is teamwork?", o: ["Solo", "Group effort", "Boss work", "None"], a: 1 },
+                { q: "Handle pressure?", o: ["Quit", "Panic", "Stay calm", "Ignore"], a: 2 },
+                { q: "Why hire you?", o: ["Luck", "Skills", "No idea", "Money"], a: 1 },
+                { q: "Handle failure?", o: ["Blame", "Learn", "Quit", "Ignore"], a: 1 },
+                { q: "What is SDLC?", o: ["Software Dev Life Cycle", "System Loop", "None", "Logic"], a: 0 },
+                { q: "Professionalism?", o: ["Dress", "Skill", "Attitude", "All"], a: 3 },
+                { q: "Communication is?", o: ["Talking", "Understanding", "Email", "Noise"], a: 1 },
+                { q: "Career priority?", o: ["Salary", "Growth", "Comfort", "Title"], a: 1 },
+                { q: "Weakness answer?", o: ["None", "Honest", "Everything", "Skip"], a: 1 },
+                { q: "Why this job?", o: ["Money", "Interest", "Force", "No reason"], a: 1 }
+            ]
+        };
+
+        // ================= RANDOMIZE =================
+        Object.values(sections).forEach(arr => arr.sort(() => Math.random() - 0.5));
+
+        // ================= GLOBAL VARIABLES =================
+        // ================= GLOBAL VARIABLES =================
+        const answers = {};
+        let currentSectionIndex = 0;
+        let flatQuestions = [];
+        const sectionNames = Object.keys(sections);
+
+        // ================= FLATTEN QUESTIONS =================
+        function flattenQuestions() {
+            flatQuestions = [];
+            let globalIdx = 0;
+            for (const [section, qs] of Object.entries(sections)) {
+                qs.forEach(q => {
+                    flatQuestions.push({ ...q, section: section, globalId: globalIdx++ });
+                });
+            }
+            return flatQuestions;
+        }
+
+        // ================= RENDER QUESTIONS (ALL ON ONE PAGE) =================
+        function renderAllQuestions() {
+            return;
+            const quiz = document.getElementById("quiz");
+            quiz.innerHTML = "";
+
+            let globalIndex = 0;
+
+            for (const [sectionName, questions] of Object.entries(sections)) {
+                // Section Heading
+                const sectionHeader = document.createElement("div");
+                sectionHeader.innerHTML = `<h2 style="margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; color: #6366f1;">${sectionName}</h2>`;
+                quiz.appendChild(sectionHeader);
+
+                // Questions for this section
+                questions.forEach((q, i) => {
+                    const questionNumber = globalIndex + 1;
+                    const qDiv = document.createElement("div");
+                    qDiv.className = "question";
+                    qDiv.innerHTML = `
+                        <p>${questionNumber}. ${q.q}</p>
+                        ${q.o.map((opt, optIndex) => `
+                            <label>
+                                <input type="radio" name="q${globalIndex}" value="${optIndex}">
+                                ${opt}
+                            </label><br>
+                        `).join("")}
+                    `;
+                    quiz.appendChild(qDiv);
+                    globalIndex++;
+                });
+            }
+
+            // Show Submit Button
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.innerText = "Submit Assessment";
+            submitBtn.onclick = () => submitQuiz();
+            submitBtn.classList.remove("hidden");
+            // Remove lingering event listener if any
+            submitBtn.removeAttribute("onclick");
+            submitBtn.addEventListener("click", () => submitQuiz());
+        }
+        // ================= RENDER QUESTIONS (ALL ON ONE PAGE) =================
+        // ================= RENDER QUESTIONS (WIZARD MODE) =================
+        function renderQuestions() {
+            const quiz = document.getElementById("quiz");
+            quiz.innerHTML = "";
+            const sectionName = sectionNames[currentSectionIndex];
+            const questions = sections[sectionName];
+
+            // Calculate start index for unique IDs
+            let globalStartIndex = 0;
+            for (let i = 0; i < currentSectionIndex; i++) {
+                globalStartIndex += sections[sectionNames[i]].length;
+            }
+
+            // Section Heading
+            const sectionHeader = document.createElement("div");
+            sectionHeader.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h2 style="margin-top: 0; font-size: 1.8rem; color: #6366f1;">${sectionName}</h2>
+                    <span style="font-size: 0.9rem; color: #94a3b8;">Section ${currentSectionIndex + 1} of ${sectionNames.length}</span>
+                </div>
+            `;
+            quiz.appendChild(sectionHeader);
+
+            // Questions for this section
+            questions.forEach((q, i) => {
+                const globalId = globalStartIndex + i;
+                const questionNumber = globalId + 1;
+                const qDiv = document.createElement("div");
+                qDiv.className = "question";
+                qDiv.innerHTML = `
+                    <p>${questionNumber}. ${q.q}</p>
+                    ${q.o.map((opt, optIndex) => `
+                        <label>
+                            <input type="radio" name="q${globalId}" value="${optIndex}"
+                            ${answers[globalId] !== undefined && answers[globalId] === optIndex ? 'checked' : ''}>
+                            ${opt}
+                        </label><br>
+                    `).join("")}
+                `;
+                quiz.appendChild(qDiv);
+            });
+
+            // Update Submit/Next Button
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.classList.remove("hidden");
+
+            // Clear previous listeners by cloning
+            const newBtn = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
+
+            if (currentSectionIndex < sectionNames.length - 1) {
+                newBtn.innerText = "Next Section";
+                newBtn.onclick = () => handleNextSection(globalStartIndex, questions.length);
+            } else {
+                newBtn.innerText = "Submit Assessment";
+                newBtn.onclick = () => submitQuiz();
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function handleNextSection(startIndex, count) {
+            // Save answers for current section before moving
+            for (let i = 0; i < count; i++) {
+                const globalId = startIndex + i;
+                const sel = document.querySelector(`input[name="q${globalId}"]:checked`);
+                if (sel) {
+                    answers[globalId] = parseInt(sel.value);
+                }
+            }
+
+            currentSectionIndex++;
+            renderQuestions();
+        }
+
+        /* OLD CODE REMOVED via replacement */
+        function ignoreOld() {
+            const quiz = document.getElementById("quiz");
+            quiz.innerHTML = "";
+
+            let globalIndex = 0;
+
+            for (const [sectionName, questions] of Object.entries(sections)) {
+                // Section Heading
+                const sectionHeader = document.createElement("div");
+                sectionHeader.innerHTML = `<h2 style="margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; color: #6366f1;">${sectionName}</h2>`;
+                quiz.appendChild(sectionHeader);
+
+                // Questions for this section
+                questions.forEach((q, i) => {
+                    const questionNumber = globalIndex + 1;
+                    const qDiv = document.createElement("div");
+                    qDiv.className = "question";
+                    qDiv.innerHTML = `
+                        <p>${questionNumber}. ${q.q}</p>
+                        ${q.o.map((opt, optIndex) => `
+                            <label>
+                                <input type="radio" name="q${globalIndex}" value="${optIndex}">
+                                ${opt}
+                            </label><br>
+                        `).join("")}
+                    `;
+                    quiz.appendChild(qDiv);
+                    globalIndex++;
+                });
+            }
+
+            // Show Submit Button
+            document.getElementById("submitBtn").innerText = "Submit Assessment";
+            document.getElementById("submitBtn").onclick = () => submitQuiz();
+            document.getElementById("submitBtn").classList.remove("hidden");
+        }
+
+
+        // ================= SUBMIT =================
+        // ================= SUBMIT =================
+        function submitQuiz(auto = false) {
+            clearInterval(window.timerInterval);
+
+            // Ensure we capture current section answers (manual or auto)
+            if (true) {
+                const sectionName = sectionNames[currentSectionIndex];
+                const questions = sections[sectionName];
+                let globalStartIndex = 0;
+                for (let i = 0; i < currentSectionIndex; i++) {
+                    globalStartIndex += sections[sectionNames[i]].length;
+                }
+
+                for (let i = 0; i < questions.length; i++) {
+                    const globalId = globalStartIndex + i;
+                    const sel = document.querySelector(`input[name="q${globalId}"]:checked`);
+                    if (sel) {
+                        answers[globalId] = parseInt(sel.value);
+                    }
+                }
+            }
+
+            let total = 0;
+            const sectionScore = {};
+
+            Object.values(sections).forEach((_, i) => sectionScore[Object.keys(sections)[i]] = 0);
+
+            // Iterate over all flat questions to calculate score
+            if (flatQuestions.length === 0) flattenQuestions();
+
+            flatQuestions.forEach((q, i) => {
+                if (answers[i] !== undefined) {
+                    const answerIndex = answers[i];
+                    if (answerIndex === q.a) {
+                        total++;
+                        sectionScore[q.section]++;
+                    }
+                }
+            });
+
+            const userData = JSON.parse(localStorage.getItem("currentUser"));
+
+            // Hide quiz section and show results page
+            document.getElementById("quizSection").classList.add("hidden");
+            document.getElementById("resultsPage").classList.remove("hidden");
+
+            // Display results on results page
+            document.getElementById("resultName").innerText = userData.name;
+            document.getElementById("resultEmail").innerText = userData.email;
+            document.getElementById("resultTime").innerText = userData.loginTime;
+            document.getElementById("totalScore").innerText = `${total}/40`;
+
+            // Display section scores
+            let scoresHTML = "";
+            Object.entries(sectionScore).forEach(([section, score]) => {
+                scoresHTML += `<p><strong>${section}:</strong> ${score}/10</p>`;
+            });
+            document.getElementById("sectionScores").innerHTML = scoresHTML;
+
+            const resultData = { total, sectionScore, userData, date: new Date().toLocaleString() };
+
+            // Save to Backend
+            fetch(`${BACKEND_URL}/api/submit`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: userData.name,
+                    email: userData.email,
+                    totalScore: total,
+                    sectionScores: sectionScore
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Result saved:", data);
+                })
+                .catch(err => {
+                    console.error("Error saving result:", err);
+                    alert("Failed to save results. Please contact admin.");
+                });
+
+            // Keep lastResult for immediate feedback/debugging if needed, or remove it. 
+            // User request implies full replacement, but keeping lastResult in localStorage might be useful for immediate persistence across refresh not handled by backend in student view?
+            // "3️⃣ Replace localStorage in your frontend" implies replacing the persistence mechanism for the dashboard.
+            // I will remove "allResults" saving. I will keep "lastResult" potentially for "Back to Login" clean up? No, backToLogin clears it.
+            localStorage.setItem("lastResult", JSON.stringify(resultData));
+        }
+
+
+        // ================= BACK TO LOGIN =================
+        function backToLogin() {
+            // Reset everything
+            document.getElementById("loginForm").reset();
+            document.getElementById("loginError").innerText = "";
+            document.getElementById("resultsPage").classList.add("hidden");
+            document.getElementById("quizSection").classList.add("hidden");
+            document.getElementById("loginSection").classList.remove("hidden");
+            localStorage.removeItem("currentUser");
+            currentQuestionIndex = 0;
+            flatQuestions = [];
+            Object.keys(answers).forEach(key => delete answers[key]);
+        }
+
+        // ================= ADMIN =================
+    </script>
+
+</body>
+
+</html>
