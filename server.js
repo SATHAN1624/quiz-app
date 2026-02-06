@@ -4,17 +4,18 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']); // Use Google DNS to bypass local SRV issues
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
+// Health check for deployment platforms
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/cse-quiz";
 
-mongoose.connect(MONGO_URI, {
-  family: 4 // Force IPv4 to avoid some Windows DNS issues
-})
+mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch(err => {
     console.error("❌ MongoDB connection error:", err.message);
